@@ -5,7 +5,7 @@
 -export([init/1, do/1, format_error/1]).
 
 -define(PROVIDER, vir).
--define(DEPS, [app_discovery, compile]).
+-define(DEPS, [app_discovery]).
 
 %% ===================================================================
 %% Public API
