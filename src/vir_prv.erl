@@ -79,6 +79,8 @@ update_materials(State) ->
 
 do_releases(State) ->
   os_cmd("rm -rf _build/default/rel"),
+  os_cmd("rebar3 clean"),
+  os_cmd("rebar3 compile"),
   case rebar_state:get(State, relx, []) of
     [] ->
       io:format("No relx stuff configured - proceeding with default release strategy"),
