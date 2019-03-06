@@ -53,6 +53,7 @@ do(State) ->
 
 update_materials(State) ->
   BranchName = strip(os_cmd("git rev-parse --abbrev-ref HEAD")),
+  CommitHash = strip(os_cmd("git rev-parse --short HEAD")),
   MajorVer = read_version("major_ver"),
   MinorVer = read_version("minor_ver"),
   BuildNo = read_version("build_no"),
@@ -73,7 +74,7 @@ update_materials(State) ->
                       end;
                     { true, Label } -> Label
                end,
-  write_labels(BuildLabel),
+  write_labels(BuildLabel, CommitHash),
   State1 = rebar_state:set(State, build_label, BuildLabel),
   State1.
 
@@ -141,10 +142,13 @@ write_version(File, Number) ->
 strip(Data) ->
   re:replace(Data, "\\s+", "", [global,{return,binary}]).
 
-write_labels(Label) ->
+write_labels(Label, CommitHash) ->
   case filelib:is_file("apps/shared/include/version.hrl") of
     true ->
-      file:write_file("apps/shared/include/version.hrl", <<"-define(VERSION, \"", Label/binary, "\").">>);
+      file:write_file("apps/shared/include/version.hrl",
+                      <<"-define(VERSION, \"", Label/binary, "\").\r\n",
+                        "-define(VERSION_COMMIT, \"", CommitHash/binary, "\").\r\n"
+                      >>);
     _ ->
       ok
   end,
