@@ -116,8 +116,8 @@ tag_git(State) ->
   os_cmd("git add deployment/build_no"),
   os_cmd("git add deployment/label"),
   os_cmd("git add apps/shared/include/version.hrl"),
-  os_cmd("git tag " ++ binary_to_list(BuildLabel)),
   os_cmd("git commit -m 'Automated build number increase: " ++ binary_to_list(BuildLabel) ++ "'"),
+  os_cmd("git tag " ++ binary_to_list(BuildLabel)),
   os_cmd("git push --tags"),
   os_cmd("git push origin `git rev-parse --abbrev-ref HEAD`"),
   State.
