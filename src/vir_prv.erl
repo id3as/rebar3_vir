@@ -5,7 +5,7 @@
 -export([init/1, do/1, format_error/1]).
 
 -define(PROVIDER, vir).
--define(DEPS, [app_discovery]).
+-define(DEPS, [app_discovery,compile]).
 
 %% ===================================================================
 %% Public API
@@ -85,17 +85,10 @@ do_releases(State) ->
   case rebar_state:get(State, relx, []) of
     [] ->
       io:format("No relx stuff configured - proceeding with default release strategy"),
-      rebar_relx:do(vir_prv, "release", ?PROVIDER, State);
-    Releases ->
-      lists:foreach(fun (Release) ->
-                        case element(2, Release) of
-                          { Name, _V } ->
-                            io:format("Doing release ~p ~n", [ Name ]),
-                            rebar_relx:do(vir_prv, "release -n " ++ atom_to_list(Name), ?PROVIDER, rebar_state:command_args(State, []));
-                          _ ->
-                            ok
-                        end
-                    end, Releases)
+      rebar_relx:do(release, State);
+    _Releases ->
+      io:format("Doing releases~n"),
+      rebar_relx:do(release, rebar_state:command_parsed_args(State, {[{all, true}], []}))
   end,
   State.
 
